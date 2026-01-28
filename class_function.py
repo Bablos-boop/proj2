@@ -1,7 +1,4 @@
-"""
-Helper module containing classes and utility functions for the FNAF-like game.
-Keeps data structures and utility functions separate from main game logic.
-"""
+
 
 import random
 from enum import Enum
@@ -35,6 +32,7 @@ class Animatronic:
     ai_level: int
     move_timer: float
     active: bool = True
+    door_damage_timer: float = 0.0  # Tracks how long pushing on a closed door
     
     def update(self, dt: float, game_hour: int) -> bool:
         """Update animatronic, returns True if moved"""
@@ -52,8 +50,31 @@ class Animatronic:
             self.move_timer = random.uniform(2.0, 5.0)
         return False
     
-    def move(self):
-        """Move animatronic to next location"""
+    def move(self, door_blocked: bool = False, dt: float = 0.0):
+        """Move animatronic to next location
+        
+        Args:
+            door_blocked: If True, animatronic is at a closed door
+            dt: Delta time for door damage accumulation
+            
+        Returns:
+            bool: True if animatronic resets from the door
+        """
+        # If at a door and it's closed, accumulate damage
+        if door_blocked and self.location in [Location.LEFT_DOOR, Location.RIGHT_DOOR]:
+            self.door_damage_timer += dt
+            # After 3 seconds, retreat back to hallway
+            if self.door_damage_timer >= 3.0:
+                self.door_damage_timer = 0.0
+                self.location = Location.HALLWAY
+                self.move_timer = random.uniform(5.0, 10.0)
+                return True  # Reset/retreat successful
+            return False
+        
+        # Reset door damage timer if door opens
+        if not door_blocked and self.location in [Location.LEFT_DOOR, Location.RIGHT_DOOR]:
+            self.door_damage_timer = 0.0
+        
         path = {
             Location.STAGE: [Location.DINING],
             Location.DINING: [Location.HALLWAY],
@@ -65,6 +86,8 @@ class Animatronic:
         if self.location in path:
             possible = path[self.location]
             self.location = random.choice(possible)
+        
+        return False
 
 
 # ============= UTILITY FUNCTIONS =============
