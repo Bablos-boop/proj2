@@ -11,7 +11,7 @@ pygame.init()
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 FPS = 60
-NIGHT_LENGTH = 480  # 8 minutes in seconds (reduced for testing)
+NIGHT_LENGTH = 480  # 8 minuter per match
 
 # Colors
 BLACK = (0, 0, 0)
@@ -21,7 +21,7 @@ GREEN = (0, 255, 0)
 BLUE = (100, 100, 255)
 GRAY = (128, 128, 128)
 DARK_GRAY = (64, 64, 64)
-MONITOR_COLOR = (30, 80, 30)  # CRT monitor green
+MONITOR_COLOR = (30, 80, 30)  # CRT monitor 
 
 class Game:
     def __init__(self):
