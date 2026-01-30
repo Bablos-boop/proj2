@@ -56,7 +56,7 @@ class Game:
     
     def update_power(self, dt: float):
         """Update power consumption"""
-        drain_rate = 0.1  # Base drain
+        drain_rate = 0.3  # Base drain
         
         if self.left_door_closed:
             drain_rate += 0.4
