@@ -7,7 +7,7 @@ from typing import List, Dict, Tuple
 
 
 class GameState(Enum):
-    """Enum for different game states"""
+    # Enum for different game states
     MENU = 1
     PLAYING = 2
     CAMERA = 3
@@ -16,7 +16,7 @@ class GameState(Enum):
 
 
 class Location(Enum):
-    """Enum for game locations"""
+    # Enum for game locations
     STAGE = 0
     DINING = 1
     HALLWAY = 2
@@ -26,7 +26,7 @@ class Location(Enum):
 
 @dataclass
 class Animatronic:
-    """Dataclass representing an animatronic character"""
+    # Dataclass representing an animatronic character
     name: str
     location: Location
     ai_level: int
@@ -51,30 +51,22 @@ class Animatronic:
         return False
     
     def move(self, door_blocked: bool = False, dt: float = 0.0):
-        """Move animatronic to next location
         
-        Args:
-            door_blocked: If True, animatronic is at a closed door
-            dt: Delta time for door damage accumulation
-            
-        Returns:
-            bool: True if animatronic resets from the door
-        """
         # If at a door and it's closed, accumulate damage
         if door_blocked and self.location in [Location.LEFT_DOOR, Location.RIGHT_DOOR]:
             self.door_damage_timer += dt
-            # After 3 seconds, retreat back to hallway
+            # After 3 seconds, force retreat back to dining area
             if self.door_damage_timer >= 3.0:
                 self.door_damage_timer = 0.0
-                self.location = Location.HALLWAY
-                self.move_timer = random.uniform(5.0, 10.0)
+                self.location = Location.DINING  # Go back to dining
+                self.move_timer = random.uniform(3.0, 6.0)  # Reset timer so they continue moving
                 return True  # Reset/retreat successful
-            return False
+            return False  # Still pushing on door
         
-        # Reset door damage timer if door opens
-        if not door_blocked and self.location in [Location.LEFT_DOOR, Location.RIGHT_DOOR]:
-            self.door_damage_timer = 0.0
+        # Reset door damage timer if door opens or not at a door
+        self.door_damage_timer = 0.0
         
+        # Only continue with normal movement if not at a door with damage timer active
         path = {
             Location.STAGE: [Location.DINING],
             Location.DINING: [Location.HALLWAY],

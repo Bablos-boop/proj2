@@ -11,7 +11,7 @@ pygame.init()
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 FPS = 60
-NIGHT_LENGTH = 480  # 8 minuter per match
+NIGHT_LENGTH = 120  # 2 minuter per match
 
 # Colors
 BLACK = (0, 0, 0)
@@ -59,15 +59,15 @@ class Game:
         drain_rate = 0.1  # Base drain
         
         if self.left_door_closed:
-            drain_rate += 0.5
+            drain_rate += 0.4
         if self.right_door_closed:
-            drain_rate += 0.5
+            drain_rate += 0.4
         if self.left_light_on:
-            drain_rate += 0.3
-        if self.right_light_on:
-            drain_rate += 0.3
-        if self.camera_open:
             drain_rate += 0.2
+        if self.right_light_on:
+            drain_rate += 0.2
+        if self.camera_open:
+            drain_rate += 0.1
         
         self.power -= drain_rate * dt
         self.power = max(0, self.power)
@@ -88,16 +88,16 @@ class Game:
                 if anim.location == Location.LEFT_DOOR:
                     # Pass door state and dt to check for retreat
                     anim.move(door_blocked=self.left_door_closed, dt=dt)
-                    # Only attack if door is open - FNAF style attack chance
+                    # Only attack if door is open 
                     if not self.left_door_closed:
-                        attack_chance = 0.15 + (anim.ai_level * 0.05) + (self.game_hour * 0.05)
+                        attack_chance = 0.8 + (anim.ai_level * 0.05) + (self.game_hour * 0.05)
                         if random.random() < attack_chance:
                             self.trigger_jumpscare(anim)
                 elif anim.location == Location.RIGHT_DOOR:
                     anim.move(door_blocked=self.right_door_closed, dt=dt)
                     # Only attack if door is open
                     if not self.right_door_closed:
-                        attack_chance = 0.15 + (anim.ai_level * 0.05) + (self.game_hour * 0.05)
+                        attack_chance = 0.8 + (anim.ai_level * 0.05) + (self.game_hour * 0.05)
                         if random.random() < attack_chance:
                             self.trigger_jumpscare(anim)
                 else:
